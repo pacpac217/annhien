@@ -239,11 +239,22 @@
         const nameEl = document.querySelector('.name');
         if (nameEl) nameEl.innerText = customName + " 🦋";
 
-        // 2. Tùy chỉnh ảnh đại diện (nếu có truyền qua ?img= hoặc ?avatar=)
+        // 2. Tùy chỉnh ảnh đại diện (hỗ trợ ?img=, ?avatar= hoặc ?uid=)
+        const avatarEl = document.querySelector('.avatar');
+        const defaultAvatar = avatarEl ? avatarEl.src : '';
         const customImg = urlParams.get('img') || urlParams.get('avatar');
-        if (customImg) {
-            const avatarEl = document.querySelector('.avatar');
-            if (avatarEl) avatarEl.src = customImg;
+        const customUid = urlParams.get('uid') || urlParams.get('id');
+
+        if (avatarEl) {
+            avatarEl.onerror = function() {
+                this.src = defaultAvatar; // Không bao giờ bị lỗi vỡ ảnh
+            };
+
+            if (customImg) {
+                avatarEl.src = customImg;
+            } else if (customUid) {
+                avatarEl.src = `https://graph.facebook.com/${customUid}/picture?type=large`;
+            }
         }
 
         // 3. Tùy chỉnh Link Shopee Affiliate của từng nick (nếu có ?aff=...)
